@@ -823,6 +823,10 @@ ngtcp2_ssize ngtcp2_rtb_recv_ack(ngtcp2_rtb *rtb, const ngtcp2_ack *fr,
     if (verify_ecn) {
       conn_verify_ecn(conn, pktns, rtb->cc, cstat, fr, ecn_acked,
                       largest_acked_sent_ts, ts);
+      /* TODO Should we call ngtcp2_rst_on_ack_recv and
+         cc->on_ack_recv here?  -> No because we only call
+         cc->congestion_event when largest_acked_sent_ts is not
+         UINT64_MAX. */
     }
     return 0;
   }
@@ -937,6 +941,7 @@ ngtcp2_ssize ngtcp2_rtb_recv_ack(ngtcp2_rtb *rtb, const ngtcp2_ack *fr,
     }
   }
 
+  cc_ack.largest_acked_sent_ts = largest_acked_sent_ts;
   cc->on_ack_recv(cc, cstat, &cc_ack, ts);
 
   return num_acked;
