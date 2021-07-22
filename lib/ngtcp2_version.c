@@ -37,3 +37,4 @@ const ngtcp2_info *ngtcp2_version(int least_version) {
   }
   return &version;
 }
+

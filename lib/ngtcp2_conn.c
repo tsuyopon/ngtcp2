@@ -8225,7 +8225,9 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
     switch (fr->type) {
     case NGTCP2_FRAME_ACK:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_ACK recieved");
     case NGTCP2_FRAME_ACK_ECN:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_ACK_ECN recieved");
       if (!conn->server) {
         conn->flags |= NGTCP2_CONN_FLAG_SERVER_ADDR_VERIFIED;
       }
@@ -8236,6 +8238,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_STREAM:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_STREAM recieved");
       rv = conn_recv_stream(conn, &fr->stream);
       if (rv != 0) {
         return rv;
@@ -8243,6 +8246,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_CRYPTO:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_CRYPTO recieved");
       rv = conn_recv_crypto(conn, NGTCP2_CRYPTO_LEVEL_APPLICATION,
                             &pktns->crypto.strm, &fr->crypto);
       if (rv != 0) {
@@ -8251,6 +8255,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_RESET_STREAM:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_RESET_STREAM recieved");
       rv = conn_recv_reset_stream(conn, &fr->reset_stream);
       if (rv != 0) {
         return rv;
@@ -8258,6 +8263,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_STOP_SENDING:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_RESET_STREAM recieved");
       rv = conn_recv_stop_sending(conn, &fr->stop_sending);
       if (rv != 0) {
         return rv;
@@ -8265,6 +8271,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_MAX_STREAM_DATA:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_MAX_STREAM_DATA recieved");
       rv = conn_recv_max_stream_data(conn, &fr->max_stream_data);
       if (rv != 0) {
         return rv;
@@ -8272,11 +8279,14 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_MAX_DATA:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_MAX_DATA recieved");
       conn_recv_max_data(conn, &fr->max_data);
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_MAX_STREAMS_BIDI:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_MAX_STREAMS_BIDI recieved");
     case NGTCP2_FRAME_MAX_STREAMS_UNI:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_MAX_STREAMS_UNI recieved");
       rv = conn_recv_max_streams(conn, &fr->max_streams);
       if (rv != 0) {
         return rv;
@@ -8284,23 +8294,29 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_CONNECTION_CLOSE:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_CONNECTION_CLOSE recieved");
     case NGTCP2_FRAME_CONNECTION_CLOSE_APP:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_CONNECTION_CLOSE_APP recieved");
       conn_recv_connection_close(conn, &fr->connection_close);
       break;
     case NGTCP2_FRAME_PING:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_PING recieved");
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_PATH_CHALLENGE:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_PATH_CHALLENGE recieved");
       conn_recv_path_challenge(conn, path, &fr->path_challenge);
       path_challenge_recved = 1;
       break;
     case NGTCP2_FRAME_PATH_RESPONSE:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_PATH_RESPONSE recieved");
       rv = conn_recv_path_response(conn, &fr->path_response, ts);
       if (rv != 0) {
         return rv;
       }
       break;
     case NGTCP2_FRAME_NEW_CONNECTION_ID:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_NEW_CONNECTION_ID recieved");
       rv = conn_recv_new_connection_id(conn, &fr->new_connection_id);
       if (rv != 0) {
         return rv;
@@ -8308,6 +8324,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       recv_ncid = 1;
       break;
     case NGTCP2_FRAME_RETIRE_CONNECTION_ID:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_RETIRE_CONNECTION_ID recieved");
       rv = conn_recv_retire_connection_id(conn, &hd, &fr->retire_connection_id,
                                           ts);
       if (rv != 0) {
@@ -8316,6 +8333,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_NEW_TOKEN:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_NEW_TOKEN recieved");
       rv = conn_recv_new_token(conn, &fr->new_token);
       if (rv != 0) {
         return rv;
@@ -8323,6 +8341,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_HANDSHAKE_DONE:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_HANDSHAKE_DONE recieved");
       rv = conn_recv_handshake_done(conn, ts);
       if (rv != 0) {
         return rv;
@@ -8330,6 +8349,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_STREAMS_BLOCKED_BIDI:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_STREAMS_BLOCKED_BIDI recieved");
       rv = conn_recv_streams_blocked_bidi(conn, &fr->streams_blocked);
       if (rv != 0) {
         return rv;
@@ -8337,6 +8357,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_STREAMS_BLOCKED_UNI:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_STREAMS_BLOCKED_UNI recieved");
       rv = conn_recv_streams_blocked_uni(conn, &fr->streams_blocked);
       if (rv != 0) {
         return rv;
@@ -8344,11 +8365,14 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_DATA_BLOCKED:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_DATA_BLOCKED recieved(not implemented yet)");
       /* TODO Not implemented yet */
       non_probing_pkt = 1;
       break;
     case NGTCP2_FRAME_DATAGRAM:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_DATAGRAM recieved");
     case NGTCP2_FRAME_DATAGRAM_LEN:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_DATAGRAM_LEN recieved");
       if ((uint64_t)nread >
           conn->local.transport_params.max_datagram_frame_size) {
         return NGTCP2_ERR_PROTO;
@@ -8902,6 +8926,7 @@ static ngtcp2_ssize conn_read_handshake(ngtcp2_conn *conn,
 int ngtcp2_conn_read_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
                          const ngtcp2_pkt_info *pi, const uint8_t *pkt,
                          size_t pktlen, ngtcp2_tstamp ts) {
+  YELLOW_PRINTF("ngtcp2_conn_read_pkt");
   int rv = 0;
   ngtcp2_ssize nread = 0;
 

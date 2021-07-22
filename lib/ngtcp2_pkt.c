@@ -434,6 +434,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_hd_short(uint8_t *out, size_t outlen,
 
 ngtcp2_ssize ngtcp2_pkt_decode_frame(ngtcp2_frame *dest, const uint8_t *payload,
                                      size_t payloadlen) {
+  WHITE_PRINTF("ngtcp2_pkt_decode_frame");
   uint8_t type;
 
   if (payloadlen == 0) {
@@ -1469,62 +1470,89 @@ ngtcp2_ssize ngtcp2_pkt_encode_frame(uint8_t *out, size_t outlen,
                                      ngtcp2_frame *fr) {
   switch (fr->type) {
   case NGTCP2_FRAME_STREAM:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_STREAM");
     return ngtcp2_pkt_encode_stream_frame(out, outlen, &fr->stream);
   case NGTCP2_FRAME_ACK:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_ACK");
   case NGTCP2_FRAME_ACK_ECN:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_ACK_ECN");
     return ngtcp2_pkt_encode_ack_frame(out, outlen, &fr->ack);
   case NGTCP2_FRAME_PADDING:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_PADDING");
     return ngtcp2_pkt_encode_padding_frame(out, outlen, &fr->padding);
   case NGTCP2_FRAME_RESET_STREAM:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_RESET_STREAM");
     return ngtcp2_pkt_encode_reset_stream_frame(out, outlen, &fr->reset_stream);
   case NGTCP2_FRAME_CONNECTION_CLOSE:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_CONNECTION_CLOSE");
   case NGTCP2_FRAME_CONNECTION_CLOSE_APP:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_CONNECTION_CLOSE_APP");
     return ngtcp2_pkt_encode_connection_close_frame(out, outlen,
                                                     &fr->connection_close);
   case NGTCP2_FRAME_MAX_DATA:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_MAX_DATA");
     return ngtcp2_pkt_encode_max_data_frame(out, outlen, &fr->max_data);
   case NGTCP2_FRAME_MAX_STREAM_DATA:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_MAX_STREAM_DATA");
     return ngtcp2_pkt_encode_max_stream_data_frame(out, outlen,
                                                    &fr->max_stream_data);
   case NGTCP2_FRAME_MAX_STREAMS_BIDI:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_MAX_STREAMS_BIDI");
   case NGTCP2_FRAME_MAX_STREAMS_UNI:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_MAX_STREAMS_UNI");
     return ngtcp2_pkt_encode_max_streams_frame(out, outlen, &fr->max_streams);
   case NGTCP2_FRAME_PING:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_PING");
     return ngtcp2_pkt_encode_ping_frame(out, outlen, &fr->ping);
   case NGTCP2_FRAME_DATA_BLOCKED:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_DATA_BLOCKED");
     return ngtcp2_pkt_encode_data_blocked_frame(out, outlen, &fr->data_blocked);
   case NGTCP2_FRAME_STREAM_DATA_BLOCKED:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_STREAM_DATA_BLOCKED");
     return ngtcp2_pkt_encode_stream_data_blocked_frame(
         out, outlen, &fr->stream_data_blocked);
   case NGTCP2_FRAME_STREAMS_BLOCKED_BIDI:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_STREAMS_BLOCKED_BIDI");
   case NGTCP2_FRAME_STREAMS_BLOCKED_UNI:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_STREAMS_BLOCKED_UNI");
     return ngtcp2_pkt_encode_streams_blocked_frame(out, outlen,
                                                    &fr->streams_blocked);
   case NGTCP2_FRAME_NEW_CONNECTION_ID:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_NEW_CONNECTION_ID");
     return ngtcp2_pkt_encode_new_connection_id_frame(out, outlen,
                                                      &fr->new_connection_id);
   case NGTCP2_FRAME_STOP_SENDING:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_STOP_SENDING");
     return ngtcp2_pkt_encode_stop_sending_frame(out, outlen, &fr->stop_sending);
   case NGTCP2_FRAME_PATH_CHALLENGE:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_PATH_CHALLENGE");
     return ngtcp2_pkt_encode_path_challenge_frame(out, outlen,
                                                   &fr->path_challenge);
   case NGTCP2_FRAME_PATH_RESPONSE:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_PATH_RESPONSE");
     return ngtcp2_pkt_encode_path_response_frame(out, outlen,
                                                  &fr->path_response);
   case NGTCP2_FRAME_CRYPTO:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_CRYPTO");
     return ngtcp2_pkt_encode_crypto_frame(out, outlen, &fr->crypto);
   case NGTCP2_FRAME_NEW_TOKEN:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_NEW_TOKEN");
     return ngtcp2_pkt_encode_new_token_frame(out, outlen, &fr->new_token);
   case NGTCP2_FRAME_RETIRE_CONNECTION_ID:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_RETIRE_CONNECTION_ID");
     return ngtcp2_pkt_encode_retire_connection_id_frame(
         out, outlen, &fr->retire_connection_id);
   case NGTCP2_FRAME_HANDSHAKE_DONE:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_HANDSHAKE_DONE");
     return ngtcp2_pkt_encode_handshake_done_frame(out, outlen,
                                                   &fr->handshake_done);
   case NGTCP2_FRAME_DATAGRAM:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_DATAGRAM");
   case NGTCP2_FRAME_DATAGRAM_LEN:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: NGTCP2_FRAME_DATAGRAM_LEN");
     return ngtcp2_pkt_encode_datagram_frame(out, outlen, &fr->datagram);
   default:
+    RED_PRINTF("ngtcp2_pkt_encode_frame: default.(unknown frame)");
     return NGTCP2_ERR_INVALID_ARGUMENT;
   }
 }

@@ -100,6 +100,7 @@ int Stream::open_file(const std::string_view &path) {
 
 namespace {
 void writecb(struct ev_loop *loop, ev_io *w, int revents) {
+  BLUE_PRINTF("CALLBACK: writecb");
   ev_io_stop(loop, w);
 
   auto c = static_cast<Client *>(w->data);
@@ -117,6 +118,7 @@ void writecb(struct ev_loop *loop, ev_io *w, int revents) {
 
 namespace {
 void readcb(struct ev_loop *loop, ev_io *w, int revents) {
+  BLUE_PRINTF("CALLBACK: readcb");
   auto ep = static_cast<Endpoint *>(w->data);
   auto c = ep->client;
 
@@ -136,6 +138,7 @@ void readcb(struct ev_loop *loop, ev_io *w, int revents) {
 
 namespace {
 void timeoutcb(struct ev_loop *loop, ev_timer *w, int revents) {
+  BLUE_PRINTF("CALLBACK: timeoutcb");
   auto c = static_cast<Client *>(w->data);
 
   if (!config.quiet) {
@@ -153,6 +156,7 @@ void Client::idle_timeout() {
 
 namespace {
 void retransmitcb(struct ev_loop *loop, ev_timer *w, int revents) {
+  BLUE_PRINTF("CALLBACK: retransmitcb");
   int rv;
   auto c = static_cast<Client *>(w->data);
 
@@ -182,6 +186,7 @@ fail:
 
 namespace {
 void change_local_addrcb(struct ev_loop *loop, ev_timer *w, int revents) {
+  BLUE_PRINTF("CALLBACK: change_local_addrcb");
   auto c = static_cast<Client *>(w->data);
 
   c->change_local_addr();
@@ -190,6 +195,7 @@ void change_local_addrcb(struct ev_loop *loop, ev_timer *w, int revents) {
 
 namespace {
 void key_updatecb(struct ev_loop *loop, ev_timer *w, int revents) {
+  BLUE_PRINTF("CALLBACK: key_updatecb");
   auto c = static_cast<Client *>(w->data);
 
   if (c->initiate_key_update() != 0) {
@@ -200,6 +206,7 @@ void key_updatecb(struct ev_loop *loop, ev_timer *w, int revents) {
 
 namespace {
 void delay_streamcb(struct ev_loop *loop, ev_timer *w, int revents) {
+  BLUE_PRINTF("CALLBACK: delay_streamcb");
   auto c = static_cast<Client *>(w->data);
 
   ev_timer_stop(loop, w);
@@ -218,6 +225,7 @@ void delay_streamcb(struct ev_loop *loop, ev_timer *w, int revents) {
 
 namespace {
 void siginthandler(struct ev_loop *loop, ev_signal *w, int revents) {
+  BLUE_PRINTF("SIGNAL Handler(SIGINT): siginthandler");
   ev_break(loop, EVBREAK_ALL);
 }
 } // namespace
@@ -2565,6 +2573,7 @@ int main(int argc, char **argv) {
       break;
     };
   }
+
 
   if (argc - optind < 2) {
     std::cerr << "Too few arguments" << std::endl;

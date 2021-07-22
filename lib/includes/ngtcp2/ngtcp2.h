@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+
+#include <stdio.h>
 #include <stdlib.h>
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
 /* MSVC < 2013 does not have inttypes.h because it is not C99
@@ -5074,5 +5076,16 @@ NGTCP2_EXTERN int ngtcp2_path_eq(const ngtcp2_path *a, const ngtcp2_path *b);
 #ifdef __cplusplus
 }
 #endif
+
+
+// debug
+#define BLACK_PRINTF(STR) printf("\e[%dm%s\e[m \n", 30, STR);
+#define RED_PRINTF(STR) printf("\e[%dm%s\e[m \n", 31, STR);
+#define GREEN_PRINTF(STR) printf("\e[%dm%s\e[m \n", 32, STR);
+#define YELLOW_PRINTF(STR) printf("\e[%dm%s\e[m \n", 33, STR);
+#define BLUE_PRINTF(STR) printf("\e[%dm%s\e[m \n", 34, STR);
+#define MAGENTA_PRINTF(STR) printf("\e[%dm%s\e[m \n", 35, STR);
+#define CYAN_PRINTF(STR) printf("\e[%dm%s\e[m \n", 36, STR);
+#define WHITE_PRINTF(STR) printf("\e[%dm%s\e[m \n", 37, STR);
 
 #endif /* NGTCP2_H */
