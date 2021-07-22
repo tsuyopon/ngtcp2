@@ -2417,6 +2417,7 @@ int Server::on_read(Endpoint &ep) {
         ngtcp2_cid *pocid = nullptr;
         switch (hd.type) {
         case NGTCP2_PKT_INITIAL:
+          YELLOW_PRINTF("Server::on_read: NGTCP2_PKT_INITIAL");
           if (config.validate_addr || hd.token.len) {
             std::cerr << "Perform stateless address validation" << std::endl;
             if (hd.token.len == 0) {
@@ -2468,6 +2469,7 @@ int Server::on_read(Endpoint &ep) {
           }
           break;
         case NGTCP2_PKT_0RTT:
+          YELLOW_PRINTF("Server::on_read: NGTCP2_PKT_0RTT");
           send_retry(&hd, ep, *local_addr, &su.sa, msg.msg_namelen);
           continue;
         }
@@ -2619,6 +2621,7 @@ int Server::send_version_negotiation(uint32_t version, const uint8_t *dcid,
 int Server::send_retry(const ngtcp2_pkt_hd *chd, Endpoint &ep,
                        const Address &local_addr, const sockaddr *sa,
                        socklen_t salen) {
+  YELLOW_PRINTF("Server::send_retry   send retry");
   std::array<char, NI_MAXHOST> host;
   std::array<char, NI_MAXSERV> port;
 

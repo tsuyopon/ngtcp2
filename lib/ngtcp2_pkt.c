@@ -434,7 +434,6 @@ ngtcp2_ssize ngtcp2_pkt_encode_hd_short(uint8_t *out, size_t outlen,
 
 ngtcp2_ssize ngtcp2_pkt_decode_frame(ngtcp2_frame *dest, const uint8_t *payload,
                                      size_t payloadlen) {
-  WHITE_PRINTF("ngtcp2_pkt_decode_frame");
   uint8_t type;
 
   if (payloadlen == 0) {

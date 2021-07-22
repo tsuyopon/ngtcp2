@@ -5427,6 +5427,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
   switch (hd.type) {
   case NGTCP2_PKT_VERSION_NEGOTIATION:
+    WHITE_PRINTF("conn_recv_handshake_pkt: NGTCP2_PKT_VERSION_NEGOTIATION");
     hdpktlen = (size_t)nread;
 
     ngtcp2_log_rx_pkt_hd(&conn->log, &hd);
@@ -5463,6 +5464,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     }
     return NGTCP2_ERR_RECV_VERSION_NEGOTIATION;
   case NGTCP2_PKT_RETRY:
+    WHITE_PRINTF("conn_recv_handshake_pkt: NGTCP2_PKT_RETRY");
     hdpktlen = (size_t)nread;
 
     ngtcp2_log_rx_pkt_hd(&conn->log, &hd);
@@ -5509,6 +5511,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
   switch (hd.type) {
   case NGTCP2_PKT_0RTT:
+    WHITE_PRINTF("conn_recv_handshake_pkt: NGTCP2_PKT_0RTT");
     if (!conn->server) {
       return NGTCP2_ERR_DISCARD_PKT;
     }
@@ -5540,6 +5543,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
     return (ngtcp2_ssize)pktlen;
   case NGTCP2_PKT_INITIAL:
+    WHITE_PRINTF("conn_recv_handshake_pkt: NGTCP2_PKT_INITIAL");
     if (!conn->in_pktns) {
       ngtcp2_log_info(
           &conn->log, NGTCP2_LOG_EVENT_PKT,
@@ -5582,6 +5586,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
     break;
   case NGTCP2_PKT_HANDSHAKE:
+    WHITE_PRINTF("conn_recv_handshake_pkt: NGTCP2_PKT_HANDSHAKE");
     if (!conn->hs_pktns->crypto.rx.ckm) {
       if (conn->server) {
         ngtcp2_log_info(
@@ -5608,6 +5613,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     break;
   default:
     /* unknown packet type */
+    WHITE_PRINTF("conn_recv_handshake_pkt: default(unknown packet type)");
     ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
                     "packet was ignored because of unknown packet type");
     return (ngtcp2_ssize)pktlen;
