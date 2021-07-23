@@ -158,6 +158,7 @@ void ngtcp2_pkt_hd_init(ngtcp2_pkt_hd *hd, uint8_t flags, uint8_t type,
 
 static int has_mask(uint8_t b, uint8_t mask) { return (b & mask) == mask; }
 
+// decode header protection for long header packet
 ngtcp2_ssize ngtcp2_pkt_decode_hd_long(ngtcp2_pkt_hd *dest, const uint8_t *pkt,
                                        size_t pktlen) {
   uint8_t type;
@@ -315,6 +316,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_hd_long(ngtcp2_pkt_hd *dest, const uint8_t *pkt,
   return (ngtcp2_ssize)len;
 }
 
+// decode header protection for short(1-RTT) header packet
 ngtcp2_ssize ngtcp2_pkt_decode_hd_short(ngtcp2_pkt_hd *dest, const uint8_t *pkt,
                                         size_t pktlen, size_t dcidlen) {
   size_t len = 1 + dcidlen;

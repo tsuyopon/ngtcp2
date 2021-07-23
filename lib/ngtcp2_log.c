@@ -588,6 +588,8 @@ void ngtcp2_log_remote_tp(ngtcp2_log *log, uint8_t exttype,
     return;
   }
 
+  WHITE_PRINTF("======================= ngtcp2_log_remote_tp: OUTPUT Trasport Parameters START =======================");
+
   if (exttype == NGTCP2_TRANSPORT_PARAMS_TYPE_ENCRYPTED_EXTENSIONS) {
     if (params->stateless_reset_token_present) {
       log->log_printf(log->user_data,
@@ -694,6 +696,7 @@ void ngtcp2_log_remote_tp(ngtcp2_log *log, uint8_t exttype,
   log->log_printf(log->user_data,
                   (NGTCP2_LOG_TP " max_datagram_frame_size=%" PRIu64),
                   NGTCP2_LOG_TP_HD_FIELDS, params->max_datagram_frame_size);
+  WHITE_PRINTF("======================= ngtcp2_log_remote_tp: OUTPUT Trasport Parameters END =======================");
 }
 
 void ngtcp2_log_pkt_lost(ngtcp2_log *log, int64_t pkt_num, uint8_t type,
