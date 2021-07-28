@@ -1592,6 +1592,7 @@ namespace {
 int http_acked_stream_data(nghttp3_conn *conn, int64_t stream_id,
                            size_t datalen, void *user_data,
                            void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_acked_stream_data");
   auto c = static_cast<Client *>(user_data);
   if (c->http_acked_stream_data(stream_id, datalen) != 0) {
     return NGHTTP3_ERR_CALLBACK_FAILURE;
@@ -1607,6 +1608,7 @@ int Client::http_acked_stream_data(int64_t stream_id, size_t datalen) {
 namespace {
 int http_recv_data(nghttp3_conn *conn, int64_t stream_id, const uint8_t *data,
                    size_t datalen, void *user_data, void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_recv_data");
   if (!config.quiet && !config.no_http_dump) {
     debug::print_http_data(stream_id, data, datalen);
   }
@@ -1621,6 +1623,7 @@ namespace {
 int http_deferred_consume(nghttp3_conn *conn, int64_t stream_id,
                           size_t nconsumed, void *user_data,
                           void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_deferred_consume");
   auto c = static_cast<Client *>(user_data);
   c->http_consume(stream_id, nconsumed);
   return 0;
@@ -1654,6 +1657,7 @@ void Client::http_write_data(int64_t stream_id, const uint8_t *data,
 namespace {
 int http_begin_headers(nghttp3_conn *conn, int64_t stream_id, void *user_data,
                        void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_begin_headers");
   if (!config.quiet) {
     debug::print_http_begin_response_headers(stream_id);
   }
@@ -1665,6 +1669,7 @@ namespace {
 int http_recv_header(nghttp3_conn *conn, int64_t stream_id, int32_t token,
                      nghttp3_rcbuf *name, nghttp3_rcbuf *value, uint8_t flags,
                      void *user_data, void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_recv_header");
   if (!config.quiet) {
     debug::print_http_header(stream_id, name, value, flags);
   }
@@ -1675,6 +1680,7 @@ int http_recv_header(nghttp3_conn *conn, int64_t stream_id, int32_t token,
 namespace {
 int http_end_headers(nghttp3_conn *conn, int64_t stream_id, void *user_data,
                      void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_end_headers");
   if (!config.quiet) {
     debug::print_http_end_headers(stream_id);
   }
@@ -1685,6 +1691,7 @@ int http_end_headers(nghttp3_conn *conn, int64_t stream_id, void *user_data,
 namespace {
 int http_begin_trailers(nghttp3_conn *conn, int64_t stream_id, void *user_data,
                         void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_begin_trailers");
   if (!config.quiet) {
     debug::print_http_begin_trailers(stream_id);
   }
@@ -1696,6 +1703,7 @@ namespace {
 int http_recv_trailer(nghttp3_conn *conn, int64_t stream_id, int32_t token,
                       nghttp3_rcbuf *name, nghttp3_rcbuf *value, uint8_t flags,
                       void *user_data, void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_recv_trailer");
   if (!config.quiet) {
     debug::print_http_header(stream_id, name, value, flags);
   }
@@ -1706,6 +1714,7 @@ int http_recv_trailer(nghttp3_conn *conn, int64_t stream_id, int32_t token,
 namespace {
 int http_end_trailers(nghttp3_conn *conn, int64_t stream_id, void *user_data,
                       void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_end_trailers");
   if (!config.quiet) {
     debug::print_http_end_trailers(stream_id);
   }
@@ -1717,6 +1726,7 @@ namespace {
 int http_begin_push_promise(nghttp3_conn *conn, int64_t stream_id,
                             int64_t push_id, void *user_data,
                             void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_begin_push_promise");
   if (!config.quiet) {
     debug::print_http_begin_push_promise(stream_id, push_id);
   }
@@ -1729,6 +1739,7 @@ int http_recv_push_promise(nghttp3_conn *conn, int64_t stream_id,
                            int64_t push_id, int32_t token, nghttp3_rcbuf *name,
                            nghttp3_rcbuf *value, uint8_t flags, void *user_data,
                            void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_recv_push_promise");
   if (!config.quiet) {
     debug::print_http_push_promise(stream_id, push_id, name, value, flags);
   }
@@ -1740,6 +1751,7 @@ namespace {
 int http_end_push_promise(nghttp3_conn *conn, int64_t stream_id,
                           int64_t push_id, void *user_data,
                           void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_end_push_promise");
   if (!config.quiet) {
     debug::print_http_end_push_promise(stream_id, push_id);
   }
@@ -1751,6 +1763,7 @@ namespace {
 int http_send_stop_sending(nghttp3_conn *conn, int64_t stream_id,
                            uint64_t app_error_code, void *user_data,
                            void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_send_stop_sending");
   auto c = static_cast<Client *>(user_data);
   if (c->send_stop_sending(stream_id, app_error_code) != 0) {
     return NGHTTP3_ERR_CALLBACK_FAILURE;
@@ -1776,6 +1789,7 @@ int Client::send_stop_sending(int64_t stream_id, uint64_t app_error_code) {
 namespace {
 int http_cancel_push(nghttp3_conn *conn, int64_t push_id, int64_t stream_id,
                      void *user_data, void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_cancel_push");
   if (!config.quiet) {
     debug::cancel_push(push_id, stream_id);
   }
@@ -1786,6 +1800,7 @@ int http_cancel_push(nghttp3_conn *conn, int64_t push_id, int64_t stream_id,
 namespace {
 int http_push_stream(nghttp3_conn *conn, int64_t push_id, int64_t stream_id,
                      void *user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_push_stream");
   if (!config.quiet) {
     debug::push_stream(push_id, stream_id);
   }
@@ -1797,6 +1812,7 @@ namespace {
 int http_stream_close(nghttp3_conn *conn, int64_t stream_id,
                       uint64_t app_error_code, void *conn_user_data,
                       void *stream_user_data) {
+  WHITE_PRINTF("nghttp3 callback: http_stream_close");
   auto c = static_cast<Client *>(conn_user_data);
   if (c->http_stream_close(stream_id, app_error_code) != 0) {
     return NGHTTP3_ERR_CALLBACK_FAILURE;
