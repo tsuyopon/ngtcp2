@@ -2131,7 +2131,7 @@ conn_write_handshake_pkt(ngtcp2_conn *conn, ngtcp2_pkt_info *pi, uint8_t *dest,
 
   ngtcp2_ppe_init(&ppe, dest, destlen, &cc);
 
-  rv = ngtcp2_ppe_encode_hd(&ppe, &hd);
+  rv = ngtcp2_ppe_encode_hd(&ppe, &hd);  // ここでヘッダーの暗号化
   if (rv != 0) {
     assert(NGTCP2_ERR_NOBUF == rv);
     return 0;
@@ -5676,11 +5676,13 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     return NGTCP2_ERR_DISCARD_PKT;
   }
 
+  // 指定したサイズにbufferをreallocして拡大する
   rv = conn_ensure_decrypt_buffer(conn, payloadlen);
   if (rv != 0) {
     return rv;
   }
 
+  // パケットの復号処理を行う
   nwrite = decrypt_pkt(conn->crypto.decrypt_buf.base, aead, payload, payloadlen,
                        conn->crypto.decrypt_hp_buf.base, hdpktlen, hd.pkt_num,
                        ckm, decrypt);
@@ -7912,7 +7914,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
   int new_cid_used = 0;
   int path_challenge_recved = 0;
 
-  if (pkt[0] & NGTCP2_HEADER_FORM_BIT) {
+  if (pkt[0] & NGTCP2_HEADER_FORM_BIT) {  // long header
     nread = ngtcp2_pkt_decode_hd_long(&hd, pkt, pktlen);
     if (nread < 0) {
       ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
@@ -8230,6 +8232,12 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     }
 
     switch (fr->type) {
+    case NGTCP2_FRAME_PADDING:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_PADDING recieved");
+      break;
+    case NGTCP2_FRAME_STREAM_DATA_BLOCKED:
+      MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_STREAM_DATA_BLOCKED recieved");
+      break;
     case NGTCP2_FRAME_ACK:
       MAGENTA_PRINTF("conn_recv_pkt: NGTCP2_FRAME_ACK recieved");
     case NGTCP2_FRAME_ACK_ECN:
@@ -8725,11 +8733,13 @@ static int conn_enqueue_handshake_done(ngtcp2_conn *conn) {
 
   assert(conn->server);
 
+  // 新しくフレームチェーン用のメモリ割り当てを行う
   rv = ngtcp2_frame_chain_new(&nfrc, conn->mem);
   if (rv != 0) {
     return rv;
   }
 
+  // HANDSHAKE_DONEフレームをセット
   nfrc->fr.type = NGTCP2_FRAME_HANDSHAKE_DONE;
   nfrc->next = pktns->tx.frq;
   pktns->tx.frq = nfrc;
@@ -10237,6 +10247,7 @@ ngtcp2_ssize ngtcp2_conn_writev_datagram(ngtcp2_conn *conn, ngtcp2_path *path,
   return ngtcp2_conn_write_vmsg(conn, path, pi, dest, destlen, &vmsg, ts);
 }
 
+// 後で書き込むために必要なデータをセットする
 ngtcp2_ssize ngtcp2_conn_write_vmsg(ngtcp2_conn *conn, ngtcp2_path *path,
                                     ngtcp2_pkt_info *pi, uint8_t *dest,
                                     size_t destlen, ngtcp2_vmsg *vmsg,

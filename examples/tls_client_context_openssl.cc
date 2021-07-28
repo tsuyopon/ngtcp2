@@ -49,6 +49,7 @@ SSL_CTX *TLSClientContext::get_native_handle() const { return ssl_ctx_; }
 
 namespace {
 int new_session_cb(SSL *ssl, SSL_SESSION *session) {
+  WHITE_PRINTF("callback for SSL_CTX_sess_set_new_cb: new_session_cb");
   if (SSL_SESSION_get_max_early_data(session) !=
       std::numeric_limits<uint32_t>::max()) {
     std::cerr << "max_early_data_size is not 0xffffffff" << std::endl;
@@ -71,6 +72,7 @@ namespace {
 int set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
                            const uint8_t *read_secret,
                            const uint8_t *write_secret, size_t secret_len) {
+  WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: set_encryption_secrets");
   auto c = static_cast<ClientBase *>(SSL_get_app_data(ssl));
   auto level = ngtcp2_crypto_openssl_from_ossl_encryption_level(ossl_level);
 
@@ -96,6 +98,12 @@ int set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
 namespace {
 int add_handshake_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
                        const uint8_t *data, size_t len) {
+  WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: add_handshake_data");
+  printf("data length: %d\n", len);
+//  char buf[1024];
+//  snprintf(buf, len, "%u", data);
+//  printf("AAAA:%u", buf);
+
   auto c = static_cast<ClientBase *>(SSL_get_app_data(ssl));
   auto level = ngtcp2_crypto_openssl_from_ossl_encryption_level(ossl_level);
   c->write_client_handshake(level, data, len);
@@ -104,11 +112,12 @@ int add_handshake_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
 } // namespace
 
 namespace {
-int flush_flight(SSL *ssl) { return 1; }
+int flush_flight(SSL *ssl) { WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: flush_flight"); return 1; }
 } // namespace
 
 namespace {
 int send_alert(SSL *ssl, enum ssl_encryption_level_t level, uint8_t alert) {
+  WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: send_alert");
   auto c = static_cast<ClientBase *>(SSL_get_app_data(ssl));
   c->set_tls_alert(alert);
   return 1;

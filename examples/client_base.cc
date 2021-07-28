@@ -61,6 +61,7 @@ ClientBase::~ClientBase() {
 
 int ClientBase::write_transport_params(const char *path,
                                        const ngtcp2_transport_params *params) {
+  WHITE_PRINTF("ClientBase::write_transport_params");
   auto f = std::ofstream(path);
   if (!f) {
     return -1;
@@ -89,6 +90,7 @@ int ClientBase::write_transport_params(const char *path,
 
 int ClientBase::read_transport_params(const char *path,
                                       ngtcp2_transport_params *params) {
+  WHITE_PRINTF("ClientBase::read_transport_params");
   auto f = std::ifstream(path);
   if (!f) {
     return -1;

@@ -42,6 +42,7 @@ int TLSClientSession::init(bool &early_data_enabled,
                            const TLSClientContext &tls_ctx,
                            const char *remote_addr, ClientBase *client,
                            AppProtocol app_proto) {
+  WHITE_PRINTF("TLSClientSession::init");
   early_data_enabled = false;
 
   auto ssl_ctx = tls_ctx.get_native_handle();
@@ -72,10 +73,12 @@ int TLSClientSession::init(bool &early_data_enabled,
   if (!config.sni.empty()) {
     SSL_set_tlsext_host_name(ssl_, config.sni.data());
   } else if (util::numeric_host(remote_addr)) {
+    WHITE_PRINTF("TLSClientSession::init set alpn hostname into localhost");
     // If remote host is numeric address, just send "localhost" as SNI
     // for now.
     SSL_set_tlsext_host_name(ssl_, "localhost");
   } else {
+    WHITE_PRINTF("TLSClientSession::init set alpn hostname ");
     SSL_set_tlsext_host_name(ssl_, remote_addr);
   }
 

@@ -409,6 +409,7 @@ int ngtcp2_crypto_read_write_crypto_data(ngtcp2_conn *conn,
   int rv;
   int err;
 
+  // SSL_provide_quic_data() is used to provide data from QUIC CRYPTO frames to the state machine, at a particular encryption level level. It is an error to call this function outside of the handshake or with an encryption level other than the current read level. The application must buffer and consolidate any frames with less than four bytes of content. It returns one on success and zero on error.
   if (SSL_provide_quic_data(
           ssl, ngtcp2_crypto_openssl_from_ngtcp2_crypto_level(crypto_level),
           data, datalen) != 1) {
@@ -437,6 +438,7 @@ int ngtcp2_crypto_read_write_crypto_data(ngtcp2_conn *conn,
     ngtcp2_conn_handshake_completed(conn);
   }
 
+  // SSL_process_quic_post_handshake() processes any data that QUIC has provided after the handshake has completed. This includes NewSessionTicket messages sent by the server.
   rv = SSL_process_quic_post_handshake(ssl);
   if (rv != 1) {
     err = SSL_get_error(ssl, rv);
@@ -466,6 +468,7 @@ int ngtcp2_crypto_set_remote_transport_params(ngtcp2_conn *conn, void *tls) {
   ngtcp2_transport_params params;
   int rv;
 
+  // SSL_get_peer_quic_transport_params() provides the caller with the value of the quic_transport_parameters extension sent by the peer. A pointer to the buffer containing the TransportParameters will be put in *out_params, and its length in *out_params_len. This buffer will be valid for the lifetime of the ssl. If no params were received from the peer, *out_params_len will be 0.
   SSL_get_peer_quic_transport_params(ssl, &tp, &tplen);
 
   rv = ngtcp2_decode_transport_params(&params, exttype, tp, tplen);
@@ -485,6 +488,9 @@ int ngtcp2_crypto_set_remote_transport_params(ngtcp2_conn *conn, void *tls) {
 
 int ngtcp2_crypto_set_local_transport_params(void *tls, const uint8_t *buf,
                                              size_t len) {
+
+
+  // SSL_set_quic_transport_params() configures ssl to send params (of length params_len) in the quic_transport_parameters extension in either the ClientHello or EncryptedExtensions handshake message. This extension will only be sent if the TLS version is at least 1.3, and for a server, only if the client sent the extension. The buffer pointed to by params only need be valid for the duration of the call to this function.
   if (SSL_set_quic_transport_params(tls, buf, len) != 1) {
     return -1;
   }

@@ -282,11 +282,13 @@ static int crypto_set_local_transport_params(ngtcp2_conn *conn, void *tls) {
 
   ngtcp2_conn_get_local_transport_params(conn, &params);
 
+  // トランスポートパラメータのセットを行う
   nwrite = ngtcp2_encode_transport_params(buf, sizeof(buf), exttype, &params);
   if (nwrite < 0) {
     return -1;
   }
 
+  // opensslへセットしたトランスポートパラメータの値を引き渡す
   if (ngtcp2_crypto_set_local_transport_params(tls, buf, (size_t)nwrite) != 0) {
     return -1;
   }

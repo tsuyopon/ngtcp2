@@ -804,6 +804,7 @@ int Client::feed_data(const Endpoint &ep, const sockaddr *sa, socklen_t salen,
   if (auto rv = ngtcp2_conn_read_pkt(conn_, &path, pi, data, datalen,
                                      util::timestamp(loop_));
       rv != 0) {
+
     std::cerr << "ngtcp2_conn_read_pkt: " << ngtcp2_strerror(rv) << std::endl;
     switch (rv) {
     case NGTCP2_ERR_REQUIRED_TRANSPORT_PARAM:
@@ -1038,6 +1039,7 @@ int Client::write_streams() {
         return -1;
       }
     }
+
 
     if (nwrite == 0) {
       // We are congestion limited.

@@ -1609,6 +1609,10 @@ int Handler::feed_data(const Endpoint &ep, const Address &local_addr,
   if (auto rv = ngtcp2_conn_read_pkt(conn_, &path, pi, data, datalen,
                                      util::timestamp(loop_));
       rv != 0) {
+    char buf[17000];
+    snprintf(buf, datalen, "%s", data);
+    YELLOW_PRINTF(buf);
+
     std::cerr << "ngtcp2_conn_read_pkt: " << ngtcp2_strerror(rv) << std::endl;
     switch (rv) {
     case NGTCP2_ERR_DRAINING:

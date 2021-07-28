@@ -643,6 +643,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_stream_frame(ngtcp2_stream *dest,
   return (ngtcp2_ssize)len;
 }
 
+// ACKフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_ack_frame(ngtcp2_ack *dest,
                                          const uint8_t *payload,
                                          size_t payloadlen) {
@@ -930,6 +931,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_connection_close_frame(
   return (ngtcp2_ssize)len;
 }
 
+// MAX_DATAフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_max_data_frame(ngtcp2_max_data *dest,
                                               const uint8_t *payload,
                                               size_t payloadlen) {
@@ -959,6 +961,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_max_data_frame(ngtcp2_max_data *dest,
   return (ngtcp2_ssize)len;
 }
 
+// MAX_STREAMDATAフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_max_stream_data_frame(
     ngtcp2_max_stream_data *dest, const uint8_t *payload, size_t payloadlen) {
   size_t len = 1 + 1 + 1;
@@ -1000,6 +1003,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_max_stream_data_frame(
   return (ngtcp2_ssize)len;
 }
 
+// MAX_STREAMSフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_max_streams_frame(ngtcp2_max_streams *dest,
                                                  const uint8_t *payload,
                                                  size_t payloadlen) {
@@ -1029,6 +1033,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_max_streams_frame(ngtcp2_max_streams *dest,
   return (ngtcp2_ssize)len;
 }
 
+// PINGフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_ping_frame(ngtcp2_ping *dest,
                                           const uint8_t *payload,
                                           size_t payloadlen) {
@@ -1039,6 +1044,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_ping_frame(ngtcp2_ping *dest,
   return 1;
 }
 
+// DATA_BLOCKEDのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_data_blocked_frame(ngtcp2_data_blocked *dest,
                                                   const uint8_t *payload,
                                                   size_t payloadlen) {
@@ -1068,6 +1074,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_data_blocked_frame(ngtcp2_data_blocked *dest,
   return (ngtcp2_ssize)len;
 }
 
+// STREAM_DATA_BLOCKEDのdecode
 ngtcp2_ssize
 ngtcp2_pkt_decode_stream_data_blocked_frame(ngtcp2_stream_data_blocked *dest,
                                             const uint8_t *payload,
@@ -1111,6 +1118,7 @@ ngtcp2_pkt_decode_stream_data_blocked_frame(ngtcp2_stream_data_blocked *dest,
   return (ngtcp2_ssize)len;
 }
 
+// STREAMS_BLOCKEDのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_streams_blocked_frame(
     ngtcp2_streams_blocked *dest, const uint8_t *payload, size_t payloadlen) {
   size_t len = 1 + 1;
@@ -1139,6 +1147,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_streams_blocked_frame(
   return (ngtcp2_ssize)len;
 }
 
+// NEW_CONNECTION_IDのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_new_connection_id_frame(
     ngtcp2_new_connection_id *dest, const uint8_t *payload, size_t payloadlen) {
   size_t len = 1 + 1 + 1 + 1 + 16;
@@ -1195,6 +1204,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_new_connection_id_frame(
   return (ngtcp2_ssize)len;
 }
 
+// STOP_SENDINGフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_stop_sending_frame(ngtcp2_stop_sending *dest,
                                                   const uint8_t *payload,
                                                   size_t payloadlen) {
@@ -1235,6 +1245,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_stop_sending_frame(ngtcp2_stop_sending *dest,
   return (ngtcp2_ssize)len;
 }
 
+// PATH_CHALLENGEフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_path_challenge_frame(ngtcp2_path_challenge *dest,
                                                     const uint8_t *payload,
                                                     size_t payloadlen) {
@@ -1256,6 +1267,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_path_challenge_frame(ngtcp2_path_challenge *dest,
   return (ngtcp2_ssize)len;
 }
 
+// PATH_RESPONSEフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_path_response_frame(ngtcp2_path_response *dest,
                                                    const uint8_t *payload,
                                                    size_t payloadlen) {
@@ -1277,6 +1289,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_path_response_frame(ngtcp2_path_response *dest,
   return (ngtcp2_ssize)len;
 }
 
+// CRYPTOフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_crypto_frame(ngtcp2_crypto *dest,
                                             const uint8_t *payload,
                                             size_t payloadlen) {
@@ -1338,6 +1351,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_crypto_frame(ngtcp2_crypto *dest,
   return (ngtcp2_ssize)len;
 }
 
+// NEW_TOKENフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_new_token_frame(ngtcp2_new_token *dest,
                                                const uint8_t *payload,
                                                size_t payloadlen) {
@@ -1378,6 +1392,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_new_token_frame(ngtcp2_new_token *dest,
   return (ngtcp2_ssize)len;
 }
 
+// RETIRE_CONNECTION_IDフレームのdecode
 ngtcp2_ssize
 ngtcp2_pkt_decode_retire_connection_id_frame(ngtcp2_retire_connection_id *dest,
                                              const uint8_t *payload,
@@ -1408,6 +1423,7 @@ ngtcp2_pkt_decode_retire_connection_id_frame(ngtcp2_retire_connection_id *dest,
   return (ngtcp2_ssize)len;
 }
 
+// HANDSHAKE_DONEフレームのdecode
 ngtcp2_ssize ngtcp2_pkt_decode_handshake_done_frame(ngtcp2_handshake_done *dest,
                                                     const uint8_t *payload,
                                                     size_t payloadlen) {
@@ -1418,6 +1434,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_handshake_done_frame(ngtcp2_handshake_done *dest,
   return 1;
 }
 
+// DATAGRAMフレームのdecode (cf. https://datatracker.ietf.org/doc/html/draft-ietf-quic-datagram )
 ngtcp2_ssize ngtcp2_pkt_decode_datagram_frame(ngtcp2_datagram *dest,
                                               const uint8_t *payload,
                                               size_t payloadlen) {
@@ -1493,6 +1510,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_datagram_frame(ngtcp2_datagram *dest,
   return (ngtcp2_ssize)len;
 }
 
+// フレームのエンコード処理
 ngtcp2_ssize ngtcp2_pkt_encode_frame(uint8_t *out, size_t outlen,
                                      ngtcp2_frame *fr) {
   switch (fr->type) {
@@ -1584,6 +1602,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_frame(uint8_t *out, size_t outlen,
   }
 }
 
+// STREAMフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_stream_frame(uint8_t *out, size_t outlen,
                                             ngtcp2_stream *fr) {
   size_t len = 1;
@@ -1639,6 +1658,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_stream_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// ACKフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_ack_frame(uint8_t *out, size_t outlen,
                                          ngtcp2_ack *fr) {
   size_t len = 1 + ngtcp2_put_varint_len((uint64_t)fr->largest_ack) +
@@ -1690,6 +1710,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_ack_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// PADDINGフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_padding_frame(uint8_t *out, size_t outlen,
                                              const ngtcp2_padding *fr) {
   if (outlen < fr->len) {
@@ -1701,6 +1722,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_padding_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)fr->len;
 }
 
+// RESET_STREAMフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_reset_stream_frame(uint8_t *out, size_t outlen,
                                      const ngtcp2_reset_stream *fr) {
@@ -1725,6 +1747,7 @@ ngtcp2_pkt_encode_reset_stream_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// CONNECTION_CLOSEフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_connection_close_frame(uint8_t *out, size_t outlen,
                                          const ngtcp2_connection_close *fr) {
@@ -1756,6 +1779,7 @@ ngtcp2_pkt_encode_connection_close_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// MAX_DATAフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_max_data_frame(uint8_t *out, size_t outlen,
                                               const ngtcp2_max_data *fr) {
   size_t len = 1 + ngtcp2_put_varint_len(fr->max_data);
@@ -1775,6 +1799,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_max_data_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// MAX_STREAM_DATAフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_max_stream_data_frame(uint8_t *out, size_t outlen,
                                         const ngtcp2_max_stream_data *fr) {
@@ -1797,6 +1822,7 @@ ngtcp2_pkt_encode_max_stream_data_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// MAX_STREAMSフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_max_streams_frame(uint8_t *out, size_t outlen,
                                                  const ngtcp2_max_streams *fr) {
   size_t len = 1 + ngtcp2_put_varint_len(fr->max_streams);
@@ -1816,6 +1842,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_max_streams_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// PINGフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_ping_frame(uint8_t *out, size_t outlen,
                                           const ngtcp2_ping *fr) {
   (void)fr;
@@ -1829,6 +1856,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_ping_frame(uint8_t *out, size_t outlen,
   return 1;
 }
 
+// DATA_BLOCKEDフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_data_blocked_frame(uint8_t *out, size_t outlen,
                                      const ngtcp2_data_blocked *fr) {
@@ -1849,6 +1877,7 @@ ngtcp2_pkt_encode_data_blocked_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// STREAM_DATA_BLOCKEDフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_stream_data_blocked_frame(
     uint8_t *out, size_t outlen, const ngtcp2_stream_data_blocked *fr) {
   size_t len = 1 + ngtcp2_put_varint_len((uint64_t)fr->stream_id) +
@@ -1870,6 +1899,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_stream_data_blocked_frame(
   return (ngtcp2_ssize)len;
 }
 
+// STREAMS_BLOCKEDフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_streams_blocked_frame(uint8_t *out, size_t outlen,
                                         const ngtcp2_streams_blocked *fr) {
@@ -1890,6 +1920,7 @@ ngtcp2_pkt_encode_streams_blocked_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// NEW_CONNECTION_IDフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_new_connection_id_frame(uint8_t *out, size_t outlen,
                                           const ngtcp2_new_connection_id *fr) {
@@ -1917,6 +1948,7 @@ ngtcp2_pkt_encode_new_connection_id_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// STOP_SENDINGフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_stop_sending_frame(uint8_t *out, size_t outlen,
                                      const ngtcp2_stop_sending *fr) {
@@ -1939,6 +1971,7 @@ ngtcp2_pkt_encode_stop_sending_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// PATH_CHALLENGEフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_path_challenge_frame(uint8_t *out, size_t outlen,
                                        const ngtcp2_path_challenge *fr) {
@@ -1959,6 +1992,7 @@ ngtcp2_pkt_encode_path_challenge_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// PATH_RESPONSEフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_path_response_frame(uint8_t *out, size_t outlen,
                                       const ngtcp2_path_response *fr) {
@@ -1979,6 +2013,7 @@ ngtcp2_pkt_encode_path_response_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// CRYPTOフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_crypto_frame(uint8_t *out, size_t outlen,
                                             const ngtcp2_crypto *fr) {
   size_t len = 1;
@@ -2016,6 +2051,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_crypto_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// NEW_TOKENフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_new_token_frame(uint8_t *out, size_t outlen,
                                                const ngtcp2_new_token *fr) {
   size_t len = 1 + ngtcp2_put_varint_len(fr->token.len) + fr->token.len;
@@ -2039,6 +2075,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_new_token_frame(uint8_t *out, size_t outlen,
   return (ngtcp2_ssize)len;
 }
 
+// RETIRE_CONNECTION_IDフレームのencode
 ngtcp2_ssize ngtcp2_pkt_encode_retire_connection_id_frame(
     uint8_t *out, size_t outlen, const ngtcp2_retire_connection_id *fr) {
   size_t len = 1 + ngtcp2_put_varint_len(fr->seq);
@@ -2059,6 +2096,7 @@ ngtcp2_ssize ngtcp2_pkt_encode_retire_connection_id_frame(
   return (ngtcp2_ssize)len;
 }
 
+// HANDSHAKE_DONEフレームのencode
 ngtcp2_ssize
 ngtcp2_pkt_encode_handshake_done_frame(uint8_t *out, size_t outlen,
                                        const ngtcp2_handshake_done *fr) {
@@ -2073,6 +2111,7 @@ ngtcp2_pkt_encode_handshake_done_frame(uint8_t *out, size_t outlen,
   return 1;
 }
 
+// DATAGRAMフレームのencode (cf. https://datatracker.ietf.org/doc/html/draft-ietf-quic-datagram )
 ngtcp2_ssize ngtcp2_pkt_encode_datagram_frame(uint8_t *out, size_t outlen,
                                               const ngtcp2_datagram *fr) {
   size_t datalen = ngtcp2_vec_len(fr->data, fr->datacnt);
