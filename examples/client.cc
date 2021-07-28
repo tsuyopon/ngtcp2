@@ -100,7 +100,7 @@ int Stream::open_file(const std::string_view &path) {
 
 namespace {
 void writecb(struct ev_loop *loop, ev_io *w, int revents) {
-  BLUE_PRINTF("CALLBACK: writecb");
+  BLUE_PRINTF("CALLBACK: writecb START");
   ev_io_stop(loop, w);
 
   auto c = static_cast<Client *>(w->data);
@@ -108,9 +108,11 @@ void writecb(struct ev_loop *loop, ev_io *w, int revents) {
   auto rv = c->on_write();
   switch (rv) {
   case 0:
+    BLUE_PRINTF("CALLBACK: writecb END1");
     return;
   case NETWORK_ERR_SEND_BLOCKED:
     c->start_wev();
+    BLUE_PRINTF("CALLBACK: writecb END2");
     return;
   }
 }
@@ -118,7 +120,7 @@ void writecb(struct ev_loop *loop, ev_io *w, int revents) {
 
 namespace {
 void readcb(struct ev_loop *loop, ev_io *w, int revents) {
-  BLUE_PRINTF("CALLBACK: readcb");
+  BLUE_PRINTF("CALLBACK: readcb START");
   auto ep = static_cast<Endpoint *>(w->data);
   auto c = ep->client;
 
@@ -128,9 +130,11 @@ void readcb(struct ev_loop *loop, ev_io *w, int revents) {
   auto rv = c->on_write();
   switch (rv) {
   case 0:
+    BLUE_PRINTF("CALLBACK: readcb END1");
     return;
   case NETWORK_ERR_SEND_BLOCKED:
     c->start_wev();
+    BLUE_PRINTF("CALLBACK: readcb END2");
     return;
   }
 }
@@ -138,7 +142,7 @@ void readcb(struct ev_loop *loop, ev_io *w, int revents) {
 
 namespace {
 void timeoutcb(struct ev_loop *loop, ev_timer *w, int revents) {
-  BLUE_PRINTF("CALLBACK: timeoutcb");
+  BLUE_PRINTF("CALLBACK: timeoutcb START");
   auto c = static_cast<Client *>(w->data);
 
   if (!config.quiet) {
@@ -146,6 +150,7 @@ void timeoutcb(struct ev_loop *loop, ev_timer *w, int revents) {
   }
 
   c->idle_timeout();
+  BLUE_PRINTF("CALLBACK: timeoutcb END");
 }
 } // namespace
 
@@ -156,7 +161,7 @@ void Client::idle_timeout() {
 
 namespace {
 void retransmitcb(struct ev_loop *loop, ev_timer *w, int revents) {
-  BLUE_PRINTF("CALLBACK: retransmitcb");
+  BLUE_PRINTF("CALLBACK: retransmitcb START");
   int rv;
   auto c = static_cast<Client *>(w->data);
 
@@ -170,6 +175,7 @@ void retransmitcb(struct ev_loop *loop, ev_timer *w, int revents) {
     goto fail;
   }
 
+  BLUE_PRINTF("CALLBACK: retransmitcb END");
   return;
 
 fail:
@@ -186,27 +192,29 @@ fail:
 
 namespace {
 void change_local_addrcb(struct ev_loop *loop, ev_timer *w, int revents) {
-  BLUE_PRINTF("CALLBACK: change_local_addrcb");
+  BLUE_PRINTF("CALLBACK: change_local_addrcb START");
   auto c = static_cast<Client *>(w->data);
 
   c->change_local_addr();
+  BLUE_PRINTF("CALLBACK: change_local_addrcb END");
 }
 } // namespace
 
 namespace {
 void key_updatecb(struct ev_loop *loop, ev_timer *w, int revents) {
-  BLUE_PRINTF("CALLBACK: key_updatecb");
+  BLUE_PRINTF("CALLBACK: key_updatecb START");
   auto c = static_cast<Client *>(w->data);
 
   if (c->initiate_key_update() != 0) {
     c->disconnect();
   }
+  BLUE_PRINTF("CALLBACK: key_updatecb END");
 }
 } // namespace
 
 namespace {
 void delay_streamcb(struct ev_loop *loop, ev_timer *w, int revents) {
-  BLUE_PRINTF("CALLBACK: delay_streamcb");
+  BLUE_PRINTF("CALLBACK: delay_streamcb START");
   auto c = static_cast<Client *>(w->data);
 
   ev_timer_stop(loop, w);
@@ -215,9 +223,11 @@ void delay_streamcb(struct ev_loop *loop, ev_timer *w, int revents) {
   auto rv = c->on_write();
   switch (rv) {
   case 0:
+    BLUE_PRINTF("CALLBACK: delay_streamcb END1");
     return;
   case NETWORK_ERR_SEND_BLOCKED:
     c->start_wev();
+    BLUE_PRINTF("CALLBACK: delay_streamcb END2");
     return;
   }
 }
@@ -225,8 +235,9 @@ void delay_streamcb(struct ev_loop *loop, ev_timer *w, int revents) {
 
 namespace {
 void siginthandler(struct ev_loop *loop, ev_signal *w, int revents) {
-  BLUE_PRINTF("SIGNAL Handler(SIGINT): siginthandler");
+  BLUE_PRINTF("SIGNAL Handler(SIGINT): siginthandler START");
   ev_break(loop, EVBREAK_ALL);
+  BLUE_PRINTF("SIGNAL Handler(SIGINT): siginthandler END");
 }
 } // namespace
 
