@@ -203,6 +203,7 @@ static int client_initial_early_data(ngtcp2_conn *conn, void *user_data) {
 
 static int recv_client_initial(ngtcp2_conn *conn, const ngtcp2_cid *dcid,
                                void *user_data) {
+  WHITE_PRINTF("ngtcp2 callback: recv_client_initial");
   ngtcp2_crypto_aead_ctx aead_ctx = {0};
   ngtcp2_crypto_cipher_ctx hp_ctx = {0};
   ngtcp2_crypto_ctx ctx;

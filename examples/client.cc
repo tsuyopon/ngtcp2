@@ -302,6 +302,9 @@ namespace {
 int recv_crypto_data(ngtcp2_conn *conn, ngtcp2_crypto_level crypto_level,
                      uint64_t offset, const uint8_t *data, size_t datalen,
                      void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: recv_crypto_data");  // WHITE_PRINTF
+
+  // HTMLのデバッグ出力はここで表示している
   if (!config.quiet && !config.no_quic_dump) {
     debug::print_crypto_data(crypto_level, data, datalen);
   }
@@ -315,6 +318,7 @@ namespace {
 int recv_stream_data(ngtcp2_conn *conn, uint32_t flags, int64_t stream_id,
                      uint64_t offset, const uint8_t *data, size_t datalen,
                      void *user_data, void *stream_user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: recv_stream_data");  // WHITE_PRINTF
   if (!config.quiet && !config.no_quic_dump) {
     debug::print_stream_data(stream_id, data, datalen);
   }
@@ -332,6 +336,7 @@ int recv_stream_data(ngtcp2_conn *conn, uint32_t flags, int64_t stream_id,
 namespace {
 int acked_crypto_offset(ngtcp2_conn *conn, ngtcp2_crypto_level crypto_level,
                         uint64_t offset, uint64_t datalen, void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: acked_crypto_offset");  // WHITE_PRINTF
   auto c = static_cast<Client *>(user_data);
   c->remove_tx_crypto_data(crypto_level, offset, datalen);
 
@@ -343,6 +348,7 @@ namespace {
 int acked_stream_data_offset(ngtcp2_conn *conn, int64_t stream_id,
                              uint64_t offset, uint64_t datalen, void *user_data,
                              void *stream_user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: acked_stream_data_offset");  // WHITE_PRINTF
   auto c = static_cast<Client *>(user_data);
   if (c->acked_stream_data_offset(stream_id, datalen) != 0) {
     return NGTCP2_ERR_CALLBACK_FAILURE;
@@ -353,6 +359,7 @@ int acked_stream_data_offset(ngtcp2_conn *conn, int64_t stream_id,
 
 namespace {
 int handshake_completed(ngtcp2_conn *conn, void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: handshake_completed");  // WHITE_PRINTF
   auto c = static_cast<Client *>(user_data);
 
   if (!config.quiet) {
@@ -402,6 +409,7 @@ int Client::handshake_completed() {
 
 namespace {
 int handshake_confirmed(ngtcp2_conn *conn, void *user_data) {
+  WHITE_PRINTF("ngtcp2 callback: handshake_confirmed");
   auto c = static_cast<Client *>(user_data);
 
   if (!config.quiet) {
@@ -435,6 +443,7 @@ int Client::handshake_confirmed() {
 namespace {
 int stream_close(ngtcp2_conn *conn, int64_t stream_id, uint64_t app_error_code,
                  void *user_data, void *stream_user_data) {
+  WHITE_PRINTF("ngtcp2 callback: stream_close");
   auto c = static_cast<Client *>(user_data);
 
   if (c->on_stream_close(stream_id, app_error_code) != 0) {
@@ -449,6 +458,7 @@ namespace {
 int stream_reset(ngtcp2_conn *conn, int64_t stream_id, uint64_t final_size,
                  uint64_t app_error_code, void *user_data,
                  void *stream_user_data) {
+  WHITE_PRINTF("ngtcp2 callback: stream_reset");
   auto c = static_cast<Client *>(user_data);
 
   if (c->on_stream_reset(stream_id) != 0) {
@@ -462,6 +472,7 @@ int stream_reset(ngtcp2_conn *conn, int64_t stream_id, uint64_t final_size,
 namespace {
 int extend_max_streams_bidi(ngtcp2_conn *conn, uint64_t max_streams,
                             void *user_data) {
+  WHITE_PRINTF("ngtcp2 callback: extend_max_streams_bidi");
   auto c = static_cast<Client *>(user_data);
 
   if (c->on_extend_max_streams() != 0) {
@@ -475,6 +486,7 @@ int extend_max_streams_bidi(ngtcp2_conn *conn, uint64_t max_streams,
 namespace {
 void rand(uint8_t *dest, size_t destlen, const ngtcp2_rand_ctx *rand_ctx,
           ngtcp2_rand_usage usage) {
+  WHITE_PRINTF("ngtcp2 callback: rand");
   auto dis = std::uniform_int_distribution<uint8_t>(0, 255);
   std::generate(dest, dest + destlen, [&dis]() { return dis(randgen); });
 }
@@ -483,6 +495,7 @@ void rand(uint8_t *dest, size_t destlen, const ngtcp2_rand_ctx *rand_ctx,
 namespace {
 int get_new_connection_id(ngtcp2_conn *conn, ngtcp2_cid *cid, uint8_t *token,
                           size_t cidlen, void *user_data) {
+  WHITE_PRINTF("ngtcp2 callback: get_new_connection_id");
   auto dis = std::uniform_int_distribution<uint8_t>(0, 255);
   auto f = [&dis]() { return dis(randgen); };
 
@@ -502,6 +515,7 @@ int get_new_connection_id(ngtcp2_conn *conn, ngtcp2_cid *cid, uint8_t *token,
 namespace {
 int remove_connection_id(ngtcp2_conn *conn, const ngtcp2_cid *cid,
                          void *user_data) {
+  WHITE_PRINTF("ngtcp2 callback: remove_connection_id");
   return 0;
 }
 } // namespace
@@ -509,6 +523,7 @@ int remove_connection_id(ngtcp2_conn *conn, const ngtcp2_cid *cid,
 namespace {
 int do_hp_mask(uint8_t *dest, const ngtcp2_crypto_cipher *hp,
                const ngtcp2_crypto_cipher_ctx *hp_ctx, const uint8_t *sample) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: do_hp_mask");  // WHITE_PRINTF
   if (ngtcp2_crypto_hp_mask(dest, hp, hp_ctx, sample) != 0) {
     return NGTCP2_ERR_CALLBACK_FAILURE;
   }
@@ -528,6 +543,7 @@ int update_key(ngtcp2_conn *conn, uint8_t *rx_secret, uint8_t *tx_secret,
                const uint8_t *current_rx_secret,
                const uint8_t *current_tx_secret, size_t secretlen,
                void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: update_key");  // WHITE_PRINTF
   auto c = static_cast<Client *>(user_data);
 
   if (c->update_key(rx_secret, tx_secret, rx_aead_ctx, rx_iv, tx_aead_ctx,
@@ -543,6 +559,7 @@ int update_key(ngtcp2_conn *conn, uint8_t *rx_secret, uint8_t *tx_secret,
 namespace {
 int path_validation(ngtcp2_conn *conn, const ngtcp2_path *path,
                     ngtcp2_path_validation_result res, void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: path_validation");  // WHITE_PRINTF
   if (!config.quiet) {
     debug::path_validation(path, res);
   }
@@ -555,6 +572,7 @@ int select_preferred_address(ngtcp2_conn *conn, ngtcp2_addr *dest,
                              void **ppath_user_data,
                              const ngtcp2_preferred_addr *paddr,
                              void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: select_preferred_address");  // WHITE_PRINTF
   auto c = static_cast<Client *>(user_data);
   Address addr;
 
@@ -581,6 +599,7 @@ namespace {
 int extend_max_stream_data(ngtcp2_conn *conn, int64_t stream_id,
                            uint64_t max_data, void *user_data,
                            void *stream_user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: extend_max_stream_data");  // WHITE_PRINTF
   auto c = static_cast<Client *>(user_data);
   if (c->extend_max_stream_data(stream_id, max_data) != 0) {
     return NGTCP2_ERR_CALLBACK_FAILURE;
@@ -601,6 +620,7 @@ int Client::extend_max_stream_data(int64_t stream_id, uint64_t max_data) {
 namespace {
 int recv_new_token(ngtcp2_conn *conn, const ngtcp2_vec *token,
                    void *user_data) {
+  printf("\e[%dm%s\e[m \n", 37, "ngtcp2 callback: recv_new_token");  // WHITE_PRINTF
   if (config.token_file.empty()) {
     return 0;
   }
