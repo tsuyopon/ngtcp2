@@ -5372,6 +5372,7 @@ conn_recv_handshake_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
                         const ngtcp2_pkt_info *pi, const uint8_t *pkt,
                         size_t pktlen, size_t dgramlen, ngtcp2_tstamp pkt_ts,
                         ngtcp2_tstamp ts) {
+  RED_PRINTF("conn_recv_handshake_pkt: processing handshake pkt");
   ngtcp2_ssize nread;
   ngtcp2_pkt_hd hd;
   ngtcp2_max_frame mfr;
@@ -5853,6 +5854,7 @@ static ngtcp2_ssize conn_recv_handshake_cpkt(ngtcp2_conn *conn,
                                              const ngtcp2_pkt_info *pi,
                                              const uint8_t *pkt, size_t pktlen,
                                              ngtcp2_tstamp ts) {
+  RED_PRINTF("conn_recv_handshake_cpkt: processing compound handshake pkt");
   ngtcp2_ssize nread;
   size_t dgramlen = pktlen;
   const uint8_t *origpkt = pkt;
@@ -6081,6 +6083,8 @@ static int conn_recv_crypto(ngtcp2_conn *conn, ngtcp2_crypto_level crypto_level,
     return 0;
   }
 
+  printf("conn_recv_crypto: fr->offset %d\n", fr->offset);
+  printf("conn_recv_crypto: fr->data[0].len %d\n", fr->data[0].len);
   fr_end_offset = fr->offset + fr->data[0].len;
 
   if (NGTCP2_MAX_VARINT < fr_end_offset) {
@@ -6088,6 +6092,7 @@ static int conn_recv_crypto(ngtcp2_conn *conn, ngtcp2_crypto_level crypto_level,
   }
 
   rx_offset = ngtcp2_strm_rx_offset(crypto);
+  printf("conn_recv_crypto: rx_offset %d\n", rx_offset);
 
   if (fr_end_offset <= rx_offset) {
     if (conn->server &&
@@ -7891,6 +7896,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
                                   const ngtcp2_pkt_info *pi, const uint8_t *pkt,
                                   size_t pktlen, size_t dgramlen,
                                   ngtcp2_tstamp pkt_ts, ngtcp2_tstamp ts) {
+  RED_PRINTF("conn_recv_pkt: processing packet without handshake");
   ngtcp2_pkt_hd hd;
   int rv = 0;
   size_t hdpktlen;
@@ -7915,6 +7921,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
   int path_challenge_recved = 0;
 
   if (pkt[0] & NGTCP2_HEADER_FORM_BIT) {  // long header
+    RED_PRINTF("\tconn_recv_pkt: long header recieved");
     nread = ngtcp2_pkt_decode_hd_long(&hd, pkt, pktlen);
     if (nread < 0) {
       ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
@@ -7981,6 +7988,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
       return (ngtcp2_ssize)pktlen;
     }
   } else {
+    RED_PRINTF("\tconn_recv_pkt: shortheader recieved");
     nread = ngtcp2_pkt_decode_hd_short(&hd, pkt, pktlen, conn->oscid.datalen);
     if (nread < 0) {
       ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
@@ -8041,6 +8049,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
     ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT, "unexpected KEY_PHASE");
 
+    // TODO: この2つの分岐条件はなに?
     if (ckm->pkt_num > hd.pkt_num) {
       if (conn->crypto.key_update.old_rx_ckm) {
         ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
@@ -8073,6 +8082,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     nwrite = NGTCP2_ERR_TLS_DECRYPT;
   }
 
+  // decryptできない場合のエラー処理
   if (nwrite < 0) {
     if (ngtcp2_err_is_fatal((int)nwrite)) {
       return nwrite;
@@ -8097,6 +8107,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     return NGTCP2_ERR_DISCARD_PKT;
   }
 
+  // reserved bitの値の確認
   rv = ngtcp2_pkt_verify_reserved_bits(conn->crypto.decrypt_hp_buf.base[0]);
   if (rv != 0) {
     ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
@@ -8105,6 +8116,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
     return NGTCP2_ERR_PROTO;
   }
 
+  // パケット番号が重複しているかどうかの確認
   if (pktns_pkt_num_is_duplicate(pktns, hd.pkt_num)) {
     ngtcp2_log_info(&conn->log, NGTCP2_LOG_EVENT_PKT,
                     "packet was discarded because of duplicated packet number");
@@ -8114,6 +8126,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
   payload = conn->crypto.decrypt_buf.base;
   payloadlen = (size_t)nwrite;
 
+  // decryptのサイズが0の場合には、何もフレームが入っていないものとしてエラー
   if (payloadlen == 0) {
     /* QUIC packet must contain at least one frame */
     return NGTCP2_ERR_PROTO;
@@ -8170,6 +8183,7 @@ static ngtcp2_ssize conn_recv_pkt(ngtcp2_conn *conn, const ngtcp2_path *path,
 
   ngtcp2_qlog_pkt_received_start(&conn->qlog);
 
+  RED_PRINTF("\t\tconn_recv_pkt: processing each frame");
   for (; payloadlen;) {
     nread = ngtcp2_pkt_decode_frame(fr, payload, payloadlen);
     if (nread < 0) {

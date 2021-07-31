@@ -277,6 +277,13 @@ void ClientBase::write_client_handshake(ngtcp2_crypto_level level,
   auto &buf = crypto.data.back();
 
   ngtcp2_conn_submit_crypto_data(conn_, level, buf.rpos(), buf.size());
+
+  // added by azarashi
+  if (!config.quiet) {
+    RED_PRINTF("ClientBase::write_client_handshake    debug::print_crypto_data");
+    debug::print_crypto_data(level, buf.rpos(), buf.size());
+  }
+
 }
 
 namespace {

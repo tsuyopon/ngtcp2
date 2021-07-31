@@ -30,6 +30,7 @@
 #include <memory>
 #include <fstream>
 #include <iomanip>
+#include <string>
 
 #include <unistd.h>
 #include <getopt.h>
@@ -829,6 +830,7 @@ int Client::init(int fd, const Address &local_addr, const Address &remote_addr,
 int Client::feed_data(const Endpoint &ep, const sockaddr *sa, socklen_t salen,
                       const ngtcp2_pkt_info *pi, uint8_t *data,
                       size_t datalen) {
+
   auto path = ngtcp2_path{{ep.addr.len, const_cast<sockaddr *>(&ep.addr.su.sa)},
                           {salen, const_cast<sockaddr *>(sa)},
                           const_cast<Endpoint *>(&ep)};
@@ -876,7 +878,10 @@ int Client::on_read(const Endpoint &ep) {
   uint8_t msg_ctrl[CMSG_SPACE(sizeof(uint8_t))];
   msg.msg_control = msg_ctrl;
 
+  int recvmsg_num = 0;
   for (;;) {
+    recvmsg_num++;
+    printf("Client::on_read: recvmsg_num=%d\n", recvmsg_num);
     msg.msg_namelen = sizeof(su);
     msg.msg_controllen = sizeof(msg_ctrl);
 
@@ -886,6 +891,7 @@ int Client::on_read(const Endpoint &ep) {
       if (errno != EAGAIN && errno != EWOULDBLOCK) {
         std::cerr << "recvmsg: " << strerror(errno) << std::endl;
       }
+      printf("Client::on_read: nread=-1 recvmsg_num=%d: Stop recvmsg. Maybe no another recieve msg\n", recvmsg_num);
       break;
     }
 
@@ -896,7 +902,7 @@ int Client::on_read(const Endpoint &ep) {
                 << util::straddr(&ep.addr.su.sa, ep.addr.len)
                 << " remote=" << util::straddr(&su.sa, msg.msg_namelen)
                 << " ecn=0x" << std::hex << pi.ecn << std::dec << " " << nread
-                << " bytes" << std::endl;
+                << " bytes" << " num=" << recvmsg_num << std::endl;
     }
 
     if (debug::packet_lost(config.rx_loss_prob)) {
@@ -907,6 +913,7 @@ int Client::on_read(const Endpoint &ep) {
     }
 
     if (feed_data(ep, &su.sa, msg.msg_namelen, &pi, buf.data(), nread) != 0) {
+      printf("Client::on_read: feed_data error, recvmsg_num=%d\n", recvmsg_num);
       return -1;
     }
 
@@ -1069,6 +1076,7 @@ int Client::write_streams() {
         disconnect();
         return -1;
       }
+
     }
 
 
@@ -1079,6 +1087,12 @@ int Client::write_streams() {
     }
 
     reset_idle_timer();
+
+//  失敗
+//    RED_PRINTF("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+//    if (!config.quiet) {
+//      debug::print_stream_data(stream_id, buf.data(), nwrite);
+//    }
 
     if (auto rv = send_packet(*static_cast<Endpoint *>(path.path.user_data),
                               path.path.remote, pi.ecn, buf.data(), nwrite);

@@ -533,7 +533,7 @@ ngtcp2_ssize ngtcp2_pkt_decode_frame(ngtcp2_frame *dest, const uint8_t *payload,
     return ngtcp2_pkt_decode_datagram_frame(&dest->datagram, payload,
                                             payloadlen);
   default:
-    CYAN_PRINTF("ngtcp2_pkt_decode_frame: default");
+    CYAN_PRINTF("ngtcp2_pkt_decode_frame: NGTCP2_FRAME_STREAM");
     if (has_mask(type, NGTCP2_FRAME_STREAM)) {
       return ngtcp2_pkt_decode_stream_frame(&dest->stream, payload, payloadlen);
     }
