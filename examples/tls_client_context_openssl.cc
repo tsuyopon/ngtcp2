@@ -72,7 +72,7 @@ namespace {
 int set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
                            const uint8_t *read_secret,
                            const uint8_t *write_secret, size_t secret_len) {
-  WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: set_encryption_secrets");
+  YELLOW_PRINTF("openssl callback for SSL_CTX_set_quic_method: set_encryption_secrets");
   auto c = static_cast<ClientBase *>(SSL_get_app_data(ssl));
   auto level = ngtcp2_crypto_openssl_from_ossl_encryption_level(ossl_level);
 
@@ -98,7 +98,7 @@ int set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
 namespace {
 int add_handshake_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
                        const uint8_t *data, size_t len) {
-  WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: add_handshake_data");
+  YELLOW_PRINTF("openssl callback for SSL_CTX_set_quic_method: add_handshake_data");
   printf("data length: %d\n", len);
 //  char buf[1024];
 //  snprintf(buf, len, "%u", data);
@@ -112,12 +112,12 @@ int add_handshake_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL ossl_level,
 } // namespace
 
 namespace {
-int flush_flight(SSL *ssl) { WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: flush_flight"); return 1; }
+int flush_flight(SSL *ssl) { YELLOW_PRINTF("openssl callback for SSL_CTX_set_quic_method: flush_flight"); return 1; }
 } // namespace
 
 namespace {
 int send_alert(SSL *ssl, enum ssl_encryption_level_t level, uint8_t alert) {
-  WHITE_PRINTF("openssl callback for SSL_CTX_set_quic_method: send_alert");
+  YELLOW_PRINTF("openssl callback for SSL_CTX_set_quic_method: send_alert");
   auto c = static_cast<ClientBase *>(SSL_get_app_data(ssl));
   c->set_tls_alert(alert);
   return 1;
@@ -168,6 +168,7 @@ int TLSClientContext::init(const char *private_key_file,
     }
   }
 
+  YELLOW_PRINTF("SSL_CTX_set_quic_method");
   SSL_CTX_set_quic_method(ssl_ctx_, &quic_method);
 
   if (config.session_file) {

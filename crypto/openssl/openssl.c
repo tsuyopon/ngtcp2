@@ -410,13 +410,16 @@ int ngtcp2_crypto_read_write_crypto_data(ngtcp2_conn *conn,
   int err;
 
   // SSL_provide_quic_data() is used to provide data from QUIC CRYPTO frames to the state machine, at a particular encryption level level. It is an error to call this function outside of the handshake or with an encryption level other than the current read level. The application must buffer and consolidate any frames with less than four bytes of content. It returns one on success and zero on error.
+  YELLOW_PRINTF("SSL_provide_quic_data");
   if (SSL_provide_quic_data(
           ssl, ngtcp2_crypto_openssl_from_ngtcp2_crypto_level(crypto_level),
           data, datalen) != 1) {
     return -1;
   }
 
+  YELLOW_PRINTF("ngtcp2_conn_get_handshake_completed");
   if (!ngtcp2_conn_get_handshake_completed(conn)) {
+    YELLOW_PRINTF("SSL_do_handshake");
     rv = SSL_do_handshake(ssl);
     if (rv <= 0) {
       err = SSL_get_error(ssl, rv);
@@ -439,6 +442,7 @@ int ngtcp2_crypto_read_write_crypto_data(ngtcp2_conn *conn,
   }
 
   // SSL_process_quic_post_handshake() processes any data that QUIC has provided after the handshake has completed. This includes NewSessionTicket messages sent by the server.
+  YELLOW_PRINTF("SSL_process_quic_post_handshake");
   rv = SSL_process_quic_post_handshake(ssl);
   if (rv != 1) {
     err = SSL_get_error(ssl, rv);
@@ -469,6 +473,7 @@ int ngtcp2_crypto_set_remote_transport_params(ngtcp2_conn *conn, void *tls) {
   int rv;
 
   // SSL_get_peer_quic_transport_params() provides the caller with the value of the quic_transport_parameters extension sent by the peer. A pointer to the buffer containing the TransportParameters will be put in *out_params, and its length in *out_params_len. This buffer will be valid for the lifetime of the ssl. If no params were received from the peer, *out_params_len will be 0.
+  YELLOW_PRINTF("SSL_get_peer_quic_transport_params");
   SSL_get_peer_quic_transport_params(ssl, &tp, &tplen);
 
   rv = ngtcp2_decode_transport_params(&params, exttype, tp, tplen);
